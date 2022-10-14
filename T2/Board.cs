@@ -14,6 +14,7 @@ public class Board
         if (_board.Count > 0)
         {
             int i = 0;
+            Console.WriteLine("### MESA ###");
             foreach (var card in _board)
             {
                 Console.WriteLine("###########");

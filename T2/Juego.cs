@@ -11,9 +11,7 @@ public class Juego
         DealBoard();
         DealPlayers();
         Console.WriteLine("Comienza el Juego");
-        _mesa.ShowBoard();
-        _players[0].GetHandView();
-        _players[1].GetHandView();
+        Turnos();
     }
 
     public void DealPlayers()
@@ -58,8 +56,24 @@ public class Juego
                 {
                     DealPlayers();
                 }
-                
+                _mesa.ShowBoard();
+                player.GetHandView();
+                int option = GetInput(player.GetHand().Count);
+                Console.WriteLine(option);
+
             }
         }
+    }
+
+    public int GetInput(int i)
+    {
+        int inputUsuario = Convert.ToInt32(Console.ReadLine());
+        while (inputUsuario < 0 || inputUsuario > i)
+        {
+            Console.WriteLine("Bruh elige un numero valido");
+            inputUsuario = Convert.ToInt32(Console.ReadLine());
+        }
+
+        return inputUsuario;
     }
 }
