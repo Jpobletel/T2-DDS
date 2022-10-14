@@ -1,3 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using T2;
 
-Console.WriteLine("Hello, World!");
+Juego hola = new Juego();
+hola.Jugar();
