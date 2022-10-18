@@ -59,7 +59,12 @@ public class Juego
                 _mesa.ShowBoard();
                 player.GetHandView();
                 int option = GetInput(player.GetHand().Count);
-                Console.WriteLine(option);
+                _mesa.AddCardToBoard(player.GetHand()[option]);
+                player.RemoveFromHand(player.GetHand()[option]);
+                if (player.GetHand().Count == 0 && _mazo.deckList.Count == 0)
+                {
+                    win = true;
+                }
 
             }
         }

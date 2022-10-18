@@ -27,6 +27,11 @@ public class Player
         _hand.Add(card);
     }
 
+    public void RemoveFromHand(Card card)
+    {
+        _hand.Remove(card);
+    }
+
     public void GetHandView()
     {
         if (_hand.Count > 0)
