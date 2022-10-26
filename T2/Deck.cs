@@ -17,11 +17,13 @@ public class Deck
     }
     public void GenerateDeck()
     {
+        int id = 0;
         foreach (var suit in suitList)
         {
             foreach (var face in faceList)
             {
-                _deck.Add(new Card(face, suit));
+                _deck.Add(new Card(id, face, suit));
+                id++;
             }
         }
     }

@@ -24,4 +24,10 @@ public class Board
             Console.WriteLine("###########");
         }
     }
+
+    public List<Card> GetBoard()
+    {
+        return _board;
+    }
+
 }

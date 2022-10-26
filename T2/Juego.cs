@@ -61,6 +61,7 @@ public class Juego
                 int option = GetInput(player.GetHand().Count);
                 _mesa.AddCardToBoard(player.GetHand()[option]);
                 player.RemoveFromHand(player.GetHand()[option]);
+                GetCombination(_mesa.GetBoard());
                 if (player.GetHand().Count == 0 && _mazo.deckList.Count == 0)
                 {
                     win = true;
@@ -80,5 +81,51 @@ public class Juego
         }
 
         return inputUsuario;
+    }
+    //https://stackoverflow.com/questions/7802822/all-possible-combinations-of-a-list-of-values
+    public void GetCombination(List<Card> list)
+    {
+        List<List<Card>> optionList = new List<List<Card>>();
+        double count = Math.Pow(2, list.Count);
+        for (int i = 1; i <= count - 1; i++)
+        {
+            List<Card> availablePlays = new List<Card>();
+            string str = Convert.ToString(i, 2).PadLeft(list.Count, '0');
+            
+            for (int j = 0; j < str.Length; j++)
+            {
+                if (str[j] == '1')
+                {
+                    availablePlays.Add(list[j]);
+                }
+            }
+            if (GetSum(availablePlays))
+            {
+                optionList.Add(availablePlays);
+            }
+        }
+
+        foreach (var cardList in optionList)
+        {
+            Console.WriteLine(cardList);
+        }
+    }
+
+    public bool GetSum(List<Card> cards)
+    {
+        int totalValue = 0;
+        foreach (var card in cards)
+        {
+            totalValue = totalValue + card.GetValue();
+        }
+
+        if (totalValue == 15)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

@@ -2,12 +2,14 @@ namespace T2;
 
 public class Card
 {
+    private int _id { get; }
     private string _face { get; }
     private string _suit { get; }
     private int _value { get; set; }
 
-    public Card(string face, string suit)
+    public Card(int id, string face, string suit)
     {
+        _id = id;
         _face = face;
         _suit = suit;
         SetValue();
@@ -38,6 +40,10 @@ public class Card
         }
     }
 
+    public int GetId()
+    {
+        return _id;
+    }
     public string GetFace()
     {
         return _face;
