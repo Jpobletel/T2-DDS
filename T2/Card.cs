@@ -57,7 +57,7 @@ public class Card
         return _value;
     }
 
-    public void GetSum(int i)
+    public void GetSummary(int i)
     {
         Console.WriteLine("[" + i + "]: " + _face + " de " + _suit);
     }

@@ -5,7 +5,7 @@ public class Player
     private string _name { get; }
     private int _puntaje = 0;
     private List<Card> _hand = new List<Card>();
-    private List<Card> _graveyard = new List<Card>();
+    private List<List<Card>> _graveyard = new List<List<Card>>();
     private int _escobas = 0;
 
     public Player(string name)
@@ -17,9 +17,14 @@ public class Player
     {
         return _hand;
     }
-    public List<Card> GetGraveyard()
+    public List<List<Card>> GetGraveyard()
     {
         return _graveyard;
+    }
+    
+    public void AddToGraveyard(List<Card> cardList)
+    {
+        _graveyard.Add(cardList);
     }
     
     public void AddToHand(Card card)
@@ -41,10 +46,15 @@ public class Player
             foreach (var card in _hand)
             {
                 Console.WriteLine("###########");
-                card.GetSum(i);
+                card.GetSummary(i);
                 i++;
             }
             Console.WriteLine("###########");
         }
+    }
+
+    public void AddEscoba()
+    {
+        _escobas++;
     }
 }

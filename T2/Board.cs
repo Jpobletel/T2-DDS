@@ -8,6 +8,10 @@ public class Board
     {
         _board.Add(card);
     }
+    public void RemoveCardFromBoard(Card card)
+    {
+        _board.Remove(card);
+    }
 
     public void ShowBoard()
     {
@@ -18,10 +22,19 @@ public class Board
             foreach (var card in _board)
             {
                 Console.WriteLine("###########");
-                card.GetSum(i);
+                card.GetSummary(i);
                 i++;
             }
             Console.WriteLine("###########");
+            Console.WriteLine("-----------------------------------");
+        }
+        else
+        {
+            Console.WriteLine("############");
+            Console.WriteLine("### MESA ###");
+            Console.WriteLine("### VACIA ###");
+            Console.WriteLine("############");
+            Console.WriteLine("-----------------------------------");
         }
     }
 

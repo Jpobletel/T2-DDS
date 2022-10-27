@@ -61,7 +61,8 @@ public class Juego
                 int option = GetInput(player.GetHand().Count);
                 _mesa.AddCardToBoard(player.GetHand()[option]);
                 player.RemoveFromHand(player.GetHand()[option]);
-                GetCombination(_mesa.GetBoard());
+                PlayOptions(GetCombination(_mesa.GetBoard()), player); 
+                
                 if (player.GetHand().Count == 0 && _mazo.deckList.Count == 0)
                 {
                     win = true;
@@ -73,17 +74,19 @@ public class Juego
 
     public int GetInput(int i)
     {
-        int inputUsuario = Convert.ToInt32(Console.ReadLine());
-        while (inputUsuario < 0 || inputUsuario > i)
+        int inputInt;
+        var inputUsuario = Console.ReadLine();
+        bool success = int.TryParse(inputUsuario, out inputInt);
+        while (!success || inputInt < 0 || inputInt >= i)
         {
-            Console.WriteLine("Bruh elige un numero valido");
-            inputUsuario = Convert.ToInt32(Console.ReadLine());
+            inputUsuario  = Console.ReadLine();
+            success = int.TryParse(inputUsuario, out inputInt);
         }
 
-        return inputUsuario;
+        return inputInt;
     }
     //https://stackoverflow.com/questions/7802822/all-possible-combinations-of-a-list-of-values
-    public void GetCombination(List<Card> list)
+    public List<List<Card>> GetCombination(List<Card> list)
     {
         List<List<Card>> optionList = new List<List<Card>>();
         double count = Math.Pow(2, list.Count);
@@ -105,10 +108,18 @@ public class Juego
             }
         }
 
+        int index = 0;
         foreach (var cardList in optionList)
         {
-            Console.WriteLine(cardList);
+            Console.WriteLine("[" + index + "]");
+            foreach (var card in cardList)
+            {
+                Console.WriteLine("    " + card.GetFace() + " de " + card.GetSuit());
+            }
+            index++;
         }
+
+        return optionList;
     }
 
     public bool GetSum(List<Card> cards)
@@ -126,6 +137,45 @@ public class Juego
         else
         {
             return false;
+        }
+    }
+
+    public void PlayOptions(List<List<Card>> optionList, Player player)
+    {
+        if (optionList.Count == 0)
+        {
+            Console.WriteLine("No hay combinaciones :/");
+        }
+        
+        else if (optionList.Count == 1)
+        {
+            player.AddToGraveyard(optionList[0]);
+            foreach (var card in optionList[0])
+            {
+                _mesa.RemoveCardFromBoard(card);
+            }
+
+            CheckEscoba(player);
+        }
+
+        else
+        {
+            int input = GetInput(optionList.Count);
+            player.AddToGraveyard(optionList[input]);
+            foreach (var card in optionList[input])
+            {
+                _mesa.RemoveCardFromBoard(card);
+            }
+            CheckEscoba(player);
+        }
+    }
+
+    public void CheckEscoba(Player player)
+    {
+        if (_mesa.GetBoard().Count==0)
+        {
+            Console.WriteLine("ESCOBAAA WOAAAAAAAAA!");
+            player.AddEscoba();
         }
     }
 }
