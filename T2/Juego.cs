@@ -12,8 +12,10 @@ public class Juego
         DealPlayers();
         Console.WriteLine("Comienza el Juego");
         Turnos();
+        EndGameSummary();
+        
+        
     }
-
     public void DealPlayers()
     {
         if (_mazo.deckList.Count >= 6)
@@ -25,7 +27,6 @@ public class Juego
             }
         }
     }
-
     public void DealBoard()
     {
         if (_mazo.deckList.Count >= 4)
@@ -43,7 +44,6 @@ public class Juego
         Console.WriteLine("Jugadores Creados c:");
         
     }
-
     public void Turnos()
     {
         string ganador;
@@ -71,7 +71,6 @@ public class Juego
             }
         }
     }
-
     public int GetInput(int i)
     {
         int inputInt;
@@ -121,7 +120,6 @@ public class Juego
 
         return optionList;
     }
-
     public bool GetSum(List<Card> cards)
     {
         int totalValue = 0;
@@ -139,7 +137,6 @@ public class Juego
             return false;
         }
     }
-
     public void PlayOptions(List<List<Card>> optionList, Player player)
     {
         if (optionList.Count == 0)
@@ -149,9 +146,9 @@ public class Juego
         
         else if (optionList.Count == 1)
         {
-            player.AddToGraveyard(optionList[0]);
             foreach (var card in optionList[0])
             {
+                player.AddToGraveyard(card);
                 _mesa.RemoveCardFromBoard(card);
             }
 
@@ -161,21 +158,64 @@ public class Juego
         else
         {
             int input = GetInput(optionList.Count);
-            player.AddToGraveyard(optionList[input]);
             foreach (var card in optionList[input])
             {
+                player.AddToGraveyard(card);
                 _mesa.RemoveCardFromBoard(card);
             }
             CheckEscoba(player);
         }
     }
-
     public void CheckEscoba(Player player)
     {
         if (_mesa.GetBoard().Count==0)
         {
             Console.WriteLine("ESCOBAAA WOAAAAAAAAA!");
             player.AddEscoba();
+        }
+    }
+
+    public void EndGameSummary()
+    {
+        Dictionary<string, int> playerOneSum = _players[0].GetSummary();
+        Dictionary<string, int> playerTwoSum = _players[1].GetSummary();
+        Comparator(playerOneSum, playerTwoSum, "Oros");
+        Comparator(playerOneSum, playerTwoSum, "Sietes");
+        Comparator(playerOneSum, playerTwoSum, "TotalCartas");
+        Console.WriteLine("Jugador 1:");
+        Console.WriteLine("    Puntos:" + _players[0].GetPuntaje());
+        Console.WriteLine("--------------------------------------------");
+        Console.WriteLine("Jugador 2:");
+        Console.WriteLine("    Puntos:" + _players[1].GetPuntaje());
+        Console.WriteLine("--------------------------------------------");
+        Console.WriteLine("GANADOR:");
+        if (_players[0].GetPuntaje() > _players[1].GetPuntaje())
+        {
+            Console.WriteLine("JUGADOR 1");
+        }
+        else
+        {
+            Console.WriteLine("JUGADOR 2");
+        }
+    }
+
+    public void Comparator(Dictionary<string, int> playerOneSum, Dictionary<string, int> playerTwoSum, string key)
+    {
+
+        if (playerOneSum[key] == playerTwoSum[key])
+        {
+            foreach (var player in _players)
+            {
+                player.AddPoint();
+            }
+        }
+        else if (playerOneSum[key] > playerTwoSum[key])
+        {
+            _players[0].AddPoint();
+        }
+        else
+        {
+            _players[1].AddPoint();
         }
     }
 }
