@@ -11,16 +11,17 @@ public class Player
     private int _cardNumber  = 0;
     private int _goldNumber  = 0;
     private Dictionary<string, int> _summary = new Dictionary<string, int>();
-
-
+    
     public Player(string name)
     {
         _name = name;
     }
+    
     public List<Card> GetHand()
     {
         return _hand;
     }
+    
     public int GetPuntaje()
     {
         return _puntaje;
@@ -40,21 +41,6 @@ public class Player
     public void RemoveFromHand(Card card)
     {
         _hand.Remove(card);
-    }
-    public void GetHandView()
-    {
-        if (_hand.Count > 0)
-        {
-            int i = 0;
-            Console.WriteLine("Mano de " + _name);
-            foreach (var card in _hand)
-            {
-                Console.WriteLine("###########");
-                card.GetSummary(i);
-                i++;
-            }
-            Console.WriteLine("###########");
-        }
     }
     public void AddEscoba()
     {

@@ -5,6 +5,7 @@ public class Juego
     private List<Player> _players = new List<Player>();
     private Deck _mazo = new Deck();
     private Board _mesa = new Board();
+    
     public void Jugar()
     {
         CreatePlayers();
@@ -41,8 +42,7 @@ public class Juego
     {
         _players.Add(new Player("J1"));
         _players.Add(new Player("J2"));
-        Console.WriteLine("Jugadores Creados c:");
-        
+
     }
     public void Turnos()
     {

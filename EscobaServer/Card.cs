@@ -57,9 +57,10 @@ public class Card
         return _value;
     }
 
-    public void GetSummary(int i)
+    public string GetSummary(int i)
     {
-        Console.WriteLine("[" + i + "]: " + _face + " de " + _suit);
+        return ("[" + i + "]: " + _face + " de " + _suit);
+        
     }
 
 }
