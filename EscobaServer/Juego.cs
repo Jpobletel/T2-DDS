@@ -44,18 +44,18 @@ public class Juego
     }
     public void Turnos()
     {
-        string ganador;
         bool win = false;
         while (!win)
         {
             int indexView = 0;
-            _viewsPlayer[0].ShowBoard(_mesa);
-            _viewsPlayer[1].ShowBoard(_mesa);
             foreach (var player in _players)
             {
+                _viewsPlayer[0].ShowBoard(_mesa);
+                _viewsPlayer[1].ShowBoard(_mesa);
                 if (player.GetHand().Count == 0 && _mazo.deckList.Count > 0) { DealPlayers(); }
                 PlayTurn(player, _viewsPlayer[indexView]);
                 if (player.GetHand().Count == 0 && _mazo.deckList.Count == 0) { win = true; }
+                indexView++;
             }
         }
     }
@@ -66,10 +66,10 @@ public class Juego
         int option = view.GetInput(player.GetHand().Count); 
         _mesa.AddCardToBoard(player.GetHand()[option]);
         player.RemoveFromHand(player.GetHand()[option]);
-        PlayOptions(GetCombination(_mesa.GetBoard()), player, view);
+        PlayOptions(GetCombination(_mesa.GetBoard(), view), player, view);
     }
     //https://stackoverflow.com/questions/7802822/all-possible-combinations-of-a-list-of-values
-    public List<List<Card>> GetCombination(List<Card> list)
+    public List<List<Card>> GetCombination(List<Card> list, SocketView view)
     {
         List<List<Card>> optionList = new List<List<Card>>();
         double count = Math.Pow(2, list.Count);
@@ -88,8 +88,8 @@ public class Juego
         int index = 0;
         foreach (var cardList in optionList)
         {
-            Console.WriteLine("[" + index + "]");
-            foreach (var card in cardList) { Console.WriteLine("    " + card.GetFace() + " de " + card.GetSuit()); }
+            view.Option(index);
+            foreach (var card in cardList) { view.PlainText("    " + card.GetFace() + " de " + card.GetSuit()); }
             index++;
         }
 
@@ -99,7 +99,8 @@ public class Juego
     {
         int totalValue = 0;
         foreach (var card in cards)
-        { totalValue = + card.GetValue(); }
+        { totalValue = totalValue + card.GetValue(); }
+        Console.WriteLine(totalValue);
         if (totalValue == 15) { return true; }
         return false;
     }

@@ -92,6 +92,14 @@ public abstract class View
             WriteLine("JUGADOR 2");
         }
     }
-    
-    
+
+    public void Option(int index)
+    {
+        WriteLine("[" + index + "]");
+    }
+
+    public void PlainText(string text)
+    {
+        WriteLine(text);
+    }
 }
