@@ -5,17 +5,16 @@ public class Juego
     private List<Player> _players = new List<Player>();
     private Deck _mazo = new Deck();
     private Board _mesa = new Board();
-    
+    private SocketView _viewFirstPlayer = new SocketView( 4444 );
+    private SocketView _viewSecondPlayer = new SocketView( 5555 );
+    private List<SocketView> _viewsPlayer = new List<SocketView>(); 
     public void Jugar()
     {
         CreatePlayers();
         DealBoard();
         DealPlayers();
-        Console.WriteLine("Comienza el Juego");
         Turnos();
         EndGameSummary();
-        
-        
     }
     public void DealPlayers()
     {
@@ -32,14 +31,13 @@ public class Juego
     {
         if (_mazo.deckList.Count >= 4)
         {
-            for (int i = 0; i < 4; i++)
-            {
-                _mesa.AddCardToBoard(_mazo.GetRandomCard());
-            }
+            for (int i = 0; i < 4; i++) { _mesa.AddCardToBoard(_mazo.GetRandomCard()); }
         }
     }
     public void CreatePlayers()
     {
+        _viewsPlayer.Add(_viewFirstPlayer);
+        _viewsPlayer.Add(_viewSecondPlayer);
         _players.Add(new Player("J1"));
         _players.Add(new Player("J2"));
 
@@ -50,39 +48,25 @@ public class Juego
         bool win = false;
         while (!win)
         {
+            int indexView = 0;
+            _viewsPlayer[0].ShowBoard(_mesa);
+            _viewsPlayer[1].ShowBoard(_mesa);
             foreach (var player in _players)
             {
-                if (player.GetHand().Count == 0 && _mazo.deckList.Count > 0)
-                {
-                    DealPlayers();
-                }
-                _mesa.ShowBoard();
-                player.GetHandView();
-                int option = GetInput(player.GetHand().Count);
-                _mesa.AddCardToBoard(player.GetHand()[option]);
-                player.RemoveFromHand(player.GetHand()[option]);
-                PlayOptions(GetCombination(_mesa.GetBoard()), player); 
-                
-                if (player.GetHand().Count == 0 && _mazo.deckList.Count == 0)
-                {
-                    win = true;
-                }
-
+                if (player.GetHand().Count == 0 && _mazo.deckList.Count > 0) { DealPlayers(); }
+                PlayTurn(player, _viewsPlayer[indexView]);
+                if (player.GetHand().Count == 0 && _mazo.deckList.Count == 0) { win = true; }
             }
         }
     }
-    public int GetInput(int i)
-    {
-        int inputInt;
-        var inputUsuario = Console.ReadLine();
-        bool success = int.TryParse(inputUsuario, out inputInt);
-        while (!success || inputInt < 0 || inputInt >= i)
-        {
-            inputUsuario  = Console.ReadLine();
-            success = int.TryParse(inputUsuario, out inputInt);
-        }
 
-        return inputInt;
+    public void PlayTurn(Player player, SocketView view)
+    {
+        view.HandView(player);
+        int option = view.GetInput(player.GetHand().Count); 
+        _mesa.AddCardToBoard(player.GetHand()[option]);
+        player.RemoveFromHand(player.GetHand()[option]);
+        PlayOptions(GetCombination(_mesa.GetBoard()), player, view);
     }
     //https://stackoverflow.com/questions/7802822/all-possible-combinations-of-a-list-of-values
     public List<List<Card>> GetCombination(List<Card> list)
@@ -96,25 +80,16 @@ public class Juego
             
             for (int j = 0; j < str.Length; j++)
             {
-                if (str[j] == '1')
-                {
-                    availablePlays.Add(list[j]);
-                }
+                if (str[j] == '1') { availablePlays.Add(list[j]); }
             }
-            if (GetSum(availablePlays))
-            {
-                optionList.Add(availablePlays);
-            }
+            if (GetSum(availablePlays)) { optionList.Add(availablePlays); }
         }
 
         int index = 0;
         foreach (var cardList in optionList)
         {
             Console.WriteLine("[" + index + "]");
-            foreach (var card in cardList)
-            {
-                Console.WriteLine("    " + card.GetFace() + " de " + card.GetSuit());
-            }
+            foreach (var card in cardList) { Console.WriteLine("    " + card.GetFace() + " de " + card.GetSuit()); }
             index++;
         }
 
@@ -124,25 +99,13 @@ public class Juego
     {
         int totalValue = 0;
         foreach (var card in cards)
-        {
-            totalValue = totalValue + card.GetValue();
-        }
-
-        if (totalValue == 15)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        { totalValue = + card.GetValue(); }
+        if (totalValue == 15) { return true; }
+        return false;
     }
-    public void PlayOptions(List<List<Card>> optionList, Player player)
+    public void PlayOptions(List<List<Card>> optionList, Player player, SocketView view )
     {
-        if (optionList.Count == 0)
-        {
-            Console.WriteLine("No hay combinaciones :/");
-        }
+        if (optionList.Count == 0) { view.NoCombinations(); }
         
         else if (optionList.Count == 1)
         {
@@ -152,25 +115,25 @@ public class Juego
                 _mesa.RemoveCardFromBoard(card);
             }
 
-            CheckEscoba(player);
+            CheckEscoba(player, view);
         }
 
         else
         {
-            int input = GetInput(optionList.Count);
+            int input = view.GetInput(optionList.Count);
             foreach (var card in optionList[input])
             {
                 player.AddToGraveyard(card);
                 _mesa.RemoveCardFromBoard(card);
             }
-            CheckEscoba(player);
+            CheckEscoba(player, view);
         }
     }
-    public void CheckEscoba(Player player)
+    public void CheckEscoba(Player player, SocketView view)
     {
         if (_mesa.GetBoard().Count==0)
         {
-            Console.WriteLine("ESCOBAAA WOAAAAAAAAA!");
+            view.Escoba();
             player.AddEscoba();
         }
     }
@@ -182,21 +145,6 @@ public class Juego
         Comparator(playerOneSum, playerTwoSum, "Oros");
         Comparator(playerOneSum, playerTwoSum, "Sietes");
         Comparator(playerOneSum, playerTwoSum, "TotalCartas");
-        Console.WriteLine("Jugador 1:");
-        Console.WriteLine("    Puntos:" + _players[0].GetPuntaje());
-        Console.WriteLine("--------------------------------------------");
-        Console.WriteLine("Jugador 2:");
-        Console.WriteLine("    Puntos:" + _players[1].GetPuntaje());
-        Console.WriteLine("--------------------------------------------");
-        Console.WriteLine("GANADOR:");
-        if (_players[0].GetPuntaje() > _players[1].GetPuntaje())
-        {
-            Console.WriteLine("JUGADOR 1");
-        }
-        else
-        {
-            Console.WriteLine("JUGADOR 2");
-        }
     }
 
     public void Comparator(Dictionary<string, int> playerOneSum, Dictionary<string, int> playerTwoSum, string key)

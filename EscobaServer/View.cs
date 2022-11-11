@@ -55,23 +55,43 @@ public abstract class View
             WriteLine("###########");
         }
     }
+    
+    public void Escoba() { WriteLine("ESCOBAAA WOAAAAAAAAA!"); }
 
-    public int GetPlay(int numerOfCards)
-    {
-        
-    }
+    public void NoCombinations(){ WriteLine("No hay combinaciones :/"); }
     
     public int GetInput(int supLimit)
     {
         int inputInt;
-        var inputUsuario = Console.ReadLine();
+        var inputUsuario = ReadLine();
         bool success = int.TryParse(inputUsuario, out inputInt);
         while (!success || inputInt < 0 || inputInt >= supLimit)
         {
-            inputUsuario  = Console.ReadLine();
+            inputUsuario  = ReadLine();
             success = int.TryParse(inputUsuario, out inputInt);
         }
 
         return inputInt;
     }
+
+    public void EngGameSummary(Dictionary<string, int> p1, Dictionary<string, int> p2, List<Player> players)
+    {
+        WriteLine("Jugador 1:");
+        WriteLine("    Puntos:" + players[0].GetPuntaje());
+        WriteLine("--------------------------------------------");
+        WriteLine("Jugador 2:");
+        WriteLine("    Puntos:" + players[1].GetPuntaje());
+        WriteLine("--------------------------------------------");
+        WriteLine("GANADOR:"); 
+        if (players[0].GetPuntaje() > players[1].GetPuntaje())
+        {
+            WriteLine("JUGADOR 1");
+        }
+        else
+        {
+            WriteLine("JUGADOR 2");
+        }
+    }
+    
+    
 }

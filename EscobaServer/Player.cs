@@ -12,40 +12,24 @@ public class Player
     private int _goldNumber  = 0;
     private Dictionary<string, int> _summary = new Dictionary<string, int>();
     
-    public Player(string name)
-    {
-        _name = name;
-    }
+    public Player(string name) { _name = name; }
+
+    public string GetName() { return _name; }
     
-    public List<Card> GetHand()
-    {
-        return _hand;
-    }
+    public List<Card> GetHand() { return _hand; }
     
-    public int GetPuntaje()
-    {
-        return _puntaje;
-    }
-    public void AddToGraveyard(Card card)
-    {
-        _graveyard.Add(card);
-    }
-    public void AddPoint()
-    {
-        _puntaje++;
-    }
-    public void AddToHand(Card card)
-    {
-        _hand.Add(card);
-    }
-    public void RemoveFromHand(Card card)
-    {
-        _hand.Remove(card);
-    }
-    public void AddEscoba()
-    {
-        _escobas++;
-    }
+    public int GetPuntaje() { return _puntaje; }
+    
+    public void AddToGraveyard(Card card) { _graveyard.Add(card); }
+    
+    public void AddPoint() { _puntaje++; }
+    
+    public void AddToHand(Card card) { _hand.Add(card); }
+    
+    public void RemoveFromHand(Card card) { _hand.Remove(card); }
+    
+    public void AddEscoba() { _escobas++; }
+    
     public void PointCalculator()
     {
         _puntaje += _escobas;
@@ -53,27 +37,11 @@ public class Player
         foreach (var card in _graveyard)
         {
             _cardNumber++;
-            if (card.GetFace()=="7" && card.GetSuit()=="Oros")
-            {
-                SevenGold = true;
-            }
-
-            if (card.GetFace()=="7")
-            {
-                _sevens++;
-            }
-            if (card.GetSuit()=="Oros")
-            {
-                _goldNumber++;
-            }
+            if (card.GetFace()=="7" && card.GetSuit()=="Oros") { SevenGold = true; }
+            if (card.GetFace()=="7") { _sevens++; }
+            if (card.GetSuit()=="Oros") { _goldNumber++; }
         }
-
-        if (SevenGold)
-        {
-            _puntaje++;
-        }
-        
-        
+        if (SevenGold) { _puntaje++; }
     }
 
     public Dictionary<string, int> GetSummary()
