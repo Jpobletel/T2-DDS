@@ -5,6 +5,7 @@ public class Juego
     private List<Player> _players = new List<Player>();
     private Deck _mazo = new Deck();
     private Board _mesa = new Board();
+    private Combinator _combinator = new Combinator();
     private SocketView _viewFirstPlayer = new SocketView( 4444 );
     private SocketView _viewSecondPlayer = new SocketView( 5555 );
     private List<SocketView> _viewsPlayer = new List<SocketView>(); 
@@ -27,6 +28,7 @@ public class Juego
             }
         }
     }
+    
     public void DealBoard()
     {
         if (_mazo.deckList.Count >= 4)
@@ -66,48 +68,12 @@ public class Juego
         int option = view.GetInput(player.GetHand().Count); 
         _mesa.AddCardToBoard(player.GetHand()[option]);
         player.RemoveFromHand(player.GetHand()[option]);
-        PlayOptions(GetCombination(_mesa.GetBoard(), view), player, view);
+        PlayOptions(_combinator.GetCombination(_mesa.GetBoard(), view), player, view);
     }
-    //https://stackoverflow.com/questions/7802822/all-possible-combinations-of-a-list-of-values
-    public List<List<Card>> GetCombination(List<Card> list, SocketView view)
-    {
-        List<List<Card>> optionList = new List<List<Card>>();
-        double count = Math.Pow(2, list.Count);
-        for (int i = 1; i <= count - 1; i++)
-        {
-            List<Card> availablePlays = new List<Card>();
-            string str = Convert.ToString(i, 2).PadLeft(list.Count, '0');
-            
-            for (int j = 0; j < str.Length; j++)
-            {
-                if (str[j] == '1') { availablePlays.Add(list[j]); }
-            }
-            if (GetSum(availablePlays)) { optionList.Add(availablePlays); }
-        }
-
-        int index = 0;
-        foreach (var cardList in optionList)
-        {
-            view.Option(index);
-            foreach (var card in cardList) { view.PlainText("    " + card.GetFace() + " de " + card.GetSuit()); }
-            index++;
-        }
-
-        return optionList;
-    }
-    public bool GetSum(List<Card> cards)
-    {
-        int totalValue = 0;
-        foreach (var card in cards)
-        { totalValue = totalValue + card.GetValue(); }
-        Console.WriteLine(totalValue);
-        if (totalValue == 15) { return true; }
-        return false;
-    }
+    
     public void PlayOptions(List<List<Card>> optionList, Player player, SocketView view )
     {
         if (optionList.Count == 0) { view.NoCombinations(); }
-        
         else if (optionList.Count == 1)
         {
             foreach (var card in optionList[0])
@@ -115,7 +81,6 @@ public class Juego
                 player.AddToGraveyard(card);
                 _mesa.RemoveCardFromBoard(card);
             }
-
             CheckEscoba(player, view);
         }
 
@@ -150,21 +115,11 @@ public class Juego
 
     public void Comparator(Dictionary<string, int> playerOneSum, Dictionary<string, int> playerTwoSum, string key)
     {
-
         if (playerOneSum[key] == playerTwoSum[key])
         {
-            foreach (var player in _players)
-            {
-                player.AddPoint();
-            }
+            foreach (var player in _players) { player.AddPoint(); }
         }
-        else if (playerOneSum[key] > playerTwoSum[key])
-        {
-            _players[0].AddPoint();
-        }
-        else
-        {
-            _players[1].AddPoint();
-        }
+        else if (playerOneSum[key] > playerTwoSum[key]) { _players[0].AddPoint(); }
+        else { _players[1].AddPoint(); }
     }
 }
